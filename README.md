@@ -5,9 +5,9 @@ the repository contains python-programs on excel files parsing
 Requirements: 
 1) python 3
 2) python packages:
-	a) pandas;
-	b) openpyxl;
-	c) xlrd.
+	a) pandas ver 1.3.1;
+	b) openpyxl ver 3.0.7;
+	c) xlrd ver 2.0.1.
 	
 Примечание: установка питон-пакетов производится через "pip install *package name*" в командной строке
 

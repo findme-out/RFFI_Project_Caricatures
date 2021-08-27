@@ -187,8 +187,23 @@ def generate_report_table(path, data, rules, proj_id):
         y += 1
     save_wb(wb, path, 'отчет_таблица')
 
+# save result dictionary to csv format
+def save_csv(data, path, file_name):
+    df = pd.DataFrame.from_dict(data)
+    # folder creation
+    if not os.path.exists(path + 'Отчет'):
+        os.mkdir(path + 'Отчет')
+    path += 'Отчет/'
+    temp = file_name
+    index = 1
+    # check for existing files with such name in the folder
+    while os.path.exists(path + temp + '.csv'):
+        temp = file_name + '_' + str(index)
+        index += 1
+    df.to_csv(path + temp + '.csv', sep=';', encoding='utf-8-sig')
+
 #Формирование результатов обработки (общая матрица для всех экспертов)
-def get_result_data(file_location, gen_report=True, gen_report_table=True):
+def get_result_data(file_location, gen_report=True, gen_report_table=True, gen_report_result=True):
     # dictionary with all parsed data
     # returns dictionary with parsed data and status of files parsing
     data = {
@@ -217,4 +232,6 @@ def get_result_data(file_location, gen_report=True, gen_report_table=True):
         generate_report(path, file_location, status)
     if gen_report_table and file_success != 0:
         generate_report_table(path, data, rules, proj_id)
+    if gen_report_result and file_success != 0:
+        save_csv(data, path, 'отчет_результат')
     return data, status

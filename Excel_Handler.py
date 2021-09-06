@@ -34,9 +34,9 @@ def get_file_location(folder_path):
         quit()
 
 #Парсинг одного файла 
-def get_data(file_location, expert_id, proj_id):
+def get_data(file_location):
     # function for excel file parsing
-    # returns list with expert name, cases and their marks
+    # returns list with cases and their marks
     # returns file parsing status
     file = pd.read_excel(file_location)
     # drop all empty rows and columns
@@ -44,10 +44,18 @@ def get_data(file_location, expert_id, proj_id):
     # rename columns for convenience
     file.columns = range(0, len(file.columns))
     status = []
-    expert_name = ''
     proj_num_id = []
     proj_num = []
     proj = -1
+
+    def check_int(val):
+        try:
+            int(val)
+            return True
+        except ValueError:
+            return False
+
+
     # iteration through excel table rows and columns
     for row_index, row_val in file.iterrows():
         temp = []
@@ -58,12 +66,9 @@ def get_data(file_location, expert_id, proj_id):
             if col_val == col_val:
                 if type(col_val) is str:
                     col_val = col_val.strip().lower()
-                    # keyword comparison
-                    if col_val == expert_id:
-                        expert_name = file[row_index][col_index + 1]
-                    elif col_val == proj_id:
-                        proj = col_index
-                if proj == col_index and type(col_val) is int:
+                if check_int(col_val):
+                    proj = col_index
+                if proj == col_index and check_int(col_val):
                     proj_status = True
                     proj_num_id.append(col_val)
         if proj_status:
@@ -85,29 +90,29 @@ def get_data(file_location, expert_id, proj_id):
     if len(status) != 0:
         return [], status
     status.append('success')
-    return [expert_name, proj_num_id, proj_num], status
+    return [proj_num_id, proj_num], status
 
 #запись блоков для отчета
-def get_rules(file_location, proj_id):
+def get_rules(file_location):
     file = pd.read_excel(file_location)
     file = file.dropna(how='all')
     file.columns = range(0, len(file.columns))
     proj = -1
+    end_cond = 4
     rules = []
     for row_index, row_val in file.iterrows():
         temp_rules = []
         for col_index, col_val in row_val.items():
-            if proj == col_index and type(col_val) is int:
-                return rules
-            if proj != -1 and col_index > proj:
-                temp_rules.append(col_val)
-            if col_val == col_val:
+            if proj == -1 and col_val == col_val:
                 if type(col_val) is str:
-                    col_val = col_val.strip().lower()
-                    if col_val == proj_id:
-                        proj = col_index
-        if len(temp_rules) != 0:
+                    proj = col_index
+            if proj != -1 and col_index >= proj:
+                temp_rules.append(col_val)
+        if proj != -1:
+            if row_index == end_cond:
+                return rules
             rules.append(temp_rules)
+
 
 #сохранение файла в xlsx-формате
 def save_wb(wb, path, file_name):
@@ -144,7 +149,7 @@ def generate_report(path, file_location, status):
     save_wb(wb_result, path, 'отчет')
 
 #Создание общей таблицы из успешно обработанных файлов (отчет_таблица)
-def generate_report_table(path, data, rules, proj_id):
+def generate_report_table(path, data, rules):
     wb = openpyxl.Workbook()
     sheet = wb.active
     sheet.title = 'Отчет'
@@ -159,16 +164,7 @@ def generate_report_table(path, data, rules, proj_id):
                 c.value = temp
             x += 1
         y += 1
-    for i in range(0, len(data['expert_name'])):
-        x = 1
-        temp = str(data['expert_name'][i])
-        c = sheet.cell(row=y, column=x)
-        c.value = temp
-        x = 2
-        y += 1
-        temp = str(proj_id)
-        c = sheet.cell(row=y, column=x)
-        c.value = temp
+    for i in range(0, len(data['proj_num_id'])):
         for j in range(0, len(data['proj_num_id'][i])):
             x = 2
             y += 1
@@ -207,31 +203,26 @@ def get_result_data(file_location, gen_report=True, gen_report_table=True, gen_r
     # dictionary with all parsed data
     # returns dictionary with parsed data and status of files parsing
     data = {
-        'expert_name': [],
         'proj_num_id': [],  # № карикатуры
         'proj_num': []  # оценка
     }
     rules = []
-    # keywords
-    expert_id = 'имя эксперта:'
-    proj_id = '№ карикатуры'
     status = []
     file_success = 0
     for location in file_location:
-        temp_data, temp_status = get_data(location, expert_id, proj_id)
+        temp_data, temp_status = get_data(location)
         status.append(temp_status)
         if temp_status[0] == 'success':
             file_success += 1
-            data['expert_name'].append(temp_data[0])
-            data['proj_num_id'].append(temp_data[1])
-            data['proj_num'].append(temp_data[2])
+            data['proj_num_id'].append(temp_data[0])
+            data['proj_num'].append(temp_data[1])
             if len(rules) == 0:
-                rules = get_rules(location, proj_id)
+                rules = get_rules(location)
     path = file_location[0][:(file_location[0].rfind('/')) + 1]
     if gen_report:
         generate_report(path, file_location, status)
     if gen_report_table and file_success != 0:
-        generate_report_table(path, data, rules, proj_id)
+        generate_report_table(path, data, rules)
     if gen_report_result and file_success != 0:
         save_csv(data, path, 'отчет_результат')
     return data, status

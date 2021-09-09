@@ -113,6 +113,21 @@ def get_rules(file_location):
                 return rules
             rules.append(temp_rules)
 
+# get rules with specific format (only the lowest rule in rule column)
+def get_rules_format(file_location):
+    file = pd.read_excel(file_location)
+    file = file.dropna(how='all')
+    file.columns = range(0, len(file.columns))
+    rules_format = []
+    for i in file:
+        last_rule = None
+        for j in file[i][:3]:
+            if j == j:
+                last_rule = j
+        if last_rule is not None:
+            rules_format.append(last_rule)
+    return rules_format
+
 
 #сохранение файла в xlsx-формате
 def save_wb(wb, path, file_name):
@@ -185,7 +200,7 @@ def generate_report_table(path, data, rules):
 
 # save result dictionary to csv format
 def save_csv(data, path, file_name):
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame.from_dict(data, dtype='O')
     # folder creation
     if not os.path.exists(path + 'Отчет'):
         os.mkdir(path + 'Отчет')
@@ -197,6 +212,26 @@ def save_csv(data, path, file_name):
         temp = file_name + '_' + str(index)
         index += 1
     df.to_csv(path + temp + '.csv', sep=';', encoding='utf-8-sig')
+
+# format data for future analysis (rules - columns with marks as their values)
+def format_csv(data, file_path):
+    new_data = dict()
+    rules_format = get_rules_format(file_path)
+    for i in range(0, len(data['proj_num_id'])):
+        for j in range(0, len(data['proj_num_id'][i])):
+            for k in range(0, len(rules_format)):
+                if rules_format[k] not in new_data:
+                    new_data[rules_format[k]] = [data['proj_num'][i][j][k]]
+                else:
+                    new_data[rules_format[k]].append(data['proj_num'][i][j][k])
+    return new_data
+
+# handle statistics (maybe should be moved to the new project)
+def work_with_format_csv():
+    file = pd.read_csv(path_to_csv, sep=';')
+    file.drop(file.columns[0], axis=1)
+    pass
+
 
 #Формирование результатов обработки (общая матрица для всех экспертов)
 def get_result_data(file_location, gen_report=True, gen_report_table=True, gen_report_result=True):
@@ -224,5 +259,6 @@ def get_result_data(file_location, gen_report=True, gen_report_table=True, gen_r
     if gen_report_table and file_success != 0:
         generate_report_table(path, data, rules)
     if gen_report_result and file_success != 0:
-        save_csv(data, path, 'отчет_результат')
+        new_data = format_csv(data, file_location[0])
+        save_csv(new_data, path, 'отчет_результат')
     return data, status

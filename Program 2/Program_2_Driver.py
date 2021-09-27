@@ -8,6 +8,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	try:
 		Program_2.work_with_format_csv(args.path)
+		print('Completed successfully')
 	except BaseException as error:
 		print(error)
 		print('Error occured')

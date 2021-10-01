@@ -1,34 +1,40 @@
 <html>
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: #000000;
-  color: #ffffff;
-}
+  html,
+  body {
+    margin: 5px;
+    padding: 0;
+    background-color: #373737;
+    color: #ffffff;
+  }
 </style>
+
 <body>
   <h1>Алгоритмы</h1>
-  <div tal:repeat="dict dict_list">
-    <h2>${dict["title"]}</h2>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th tal:repeat="col dict['col_title']" tal:content="col">
-            ${col}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr tal:repeat="row dict['row_num']">
-          <th>${row[0]}</th>
-          <td tal:repeat="col_num dict['data_len']">
-            ${dict['data'][row[1]][col_num]}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div tal:repeat="dict_list dict_list_list">
+    <h2>${dict_list["title"]}</h2>
+    <p>${dict_list["desc"]}</p>
+    <div tal:repeat="dict dict_list['value']">
+      <p>${dict["desc"]}</p>
+      <table border="1" class="dataframe">
+        <thead>
+          <tr style="text-align: right;">
+            <th></th>
+            <th tal:repeat="col dict['col_title']" tal:content="col">
+              ${col}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tal:repeat="row dict['row_num']">
+            <th>${row[0]}</th>
+            <td tal:repeat="col_num dict['data_len']">
+              ${dict['data'][row[1]][col_num]}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 

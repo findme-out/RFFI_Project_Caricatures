@@ -8,7 +8,8 @@ Requirements:
 	a) pandas ver 1.3.1;
 	b) openpyxl ver 3.0.7;
 	c) xlrd ver 2.0.1;
-	d) chameleon ver 3.9.1.
+	d) chameleon ver 3.9.1;
+	e) scipy ver 1.7.1.
 	
 Примечание: установка питон-пакетов производится через "pip install *package name*" в командной строке
 

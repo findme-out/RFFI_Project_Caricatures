@@ -24,9 +24,7 @@ def generate_html(path_to_csv, template_list, template_name='template.html', out
         temp_file_name = output_file_name + '_' + str(index)
         index += 1
     with open(path + temp_file_name + '.html', 'w', encoding='utf-8') as file:
-        file.write(template(dict_list=template_list))
-        #file.write(template(title=template_params['title'], col_title=template_params['col_title'], row_num=template_params['row_num'],
-        #                    data=template_params['data'], data_len=template_params['data_len']))
+        file.write(template(dict_list_list=template_list))
 
 
 # handle statistics

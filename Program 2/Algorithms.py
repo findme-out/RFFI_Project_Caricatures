@@ -1,59 +1,96 @@
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+# utility function
+def add_one(x):
+    return x + 1
+
+# utility function
+def gen_stat(df, expected):
+    first_vals = df.values
+    last_vals = expected
+    res = []
+    for i in range(0, len(first_vals)):
+        temp = []
+        for j in range(0, len(first_vals[i])):
+            temp.append(first_vals[i][j] / last_vals[i][j] * 100)
+        res.append(temp)
+    return res
+        
 # generate dictionary for statistics 1
 def gen_statistics_1(file):
-    df = file.agg(['mean', 'median', 'std', 'var'])
+    df = pd.DataFrame([file[file['1.3.1'] == True].sum(), file[file['1.3.1'] == False].sum()], index=['eng', 'ru'])
+    df = df.drop(['1.3.1', '1.3.2'], axis=1)
+    if 0 in df.values:
+        df = df.apply(add_one)
+    stat, p, dof, expected = chi2_contingency(df)
+    res = gen_stat(df, expected)
+    res = pd.DataFrame([res[0], res[1]], index=['eng', 'ru'], columns=df.columns)
     template_params = {
-        'title': 'Статистический анализ 1',
-        'col_title': list(df.columns),
-        'row_num': [['mean', 0], ['median', 1], ['std', 2], ['var', 3]],
-        'data': df.values.tolist(),
-        'data_len': [i for i in range(0, len(df.columns))]
+        'desc': '',
+        'col_title': res.columns.tolist(),
+        'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
+        'data': res.values.tolist(),
+        'data_len': [i for i in range(0, len(res.columns))]
     }
-    return template_params
+    res_dict = {
+        'title': 'Статистический анализ 1',
+        'desc': 'Тест значимости при помощи алгоритма chi-square',
+        'value': [template_params]
+    }
+    return res_dict
 
 # generate dictionary for statistics 2
 def gen_statistics_2(file):
-    df_eng = file[file['1.3.1'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_ru = file[file['1.3.1'] == False].agg(['mean', 'median', 'std', 'var'])
-    col_title = []
-    if len(df_eng.columns) != 0:
-        col_title = list(df_eng.columns)
-    else:
-        col_title = list(df_ru.columns)
+    df = pd.DataFrame([file[file['1.3.1'] == True].sum(), file[file['1.3.1'] == False].sum()], index=['eng', 'ru'])
+    df = df.drop(['1.3.1', '1.3.2'], axis=1)
+    if 0 in df.values:
+        df = df.apply(add_one)
+    stat, p, dof, expected = chi2_contingency(df)
+    res = gen_stat(df, expected)
+    res = pd.DataFrame([res[0], res[1]], index=['eng', 'ru'], columns=df.columns)
     template_params = {
-        'title': 'Статистический анализ 2',
-        'col_title': col_title,
-        'row_num': [['mean_eng', 0], ['median_eng', 1], ['std_eng', 2], ['var_eng', 3], ['mean_ru', 4], ['median_ru', 5], ['std_ru', 6], ['var_ru', 7]],
-        'data': df_eng.values.tolist() + df_ru.values.tolist(),
-        'data_len': [i for i in range(0, len(col_title))]
+        'desc': 'Разделение на языковые подгруппы согласно пункту 1.3.1 (eng-ru)',
+        'col_title': res.columns.tolist(),
+        'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
+        'data': res.values.tolist(),
+        'data_len': [i for i in range(0, len(res.columns))]
     }
-    return template_params
+    res_dict = {
+        'title': 'Статистический анализ 2',
+        'desc': 'Тест значимости при помощи алгоритма chi-square',
+        'value': [template_params]
+    }
+    return res_dict
 
 # generate dictionary for statistics 3
 def gen_statistics_3(file):
-    df_eng = file[file['1.3.1'] == True]
-    df_eng_1 = df_eng[df_eng['2.1.1'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_eng_2 = df_eng[df_eng['2.1.2'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_eng_3 = df_eng[df_eng['2.1.3'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_eng_4 = df_eng[df_eng['2.1.4'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_ru = file[file['1.3.1'] == False]
-    df_ru_1 = df_ru[df_ru['2.1.1'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_ru_2 = df_ru[df_ru['2.1.2'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_ru_3 = df_ru[df_ru['2.1.3'] == True].agg(['mean', 'median', 'std', 'var'])
-    df_ru_4 = df_ru[df_ru['2.1.4'] == True].agg(['mean', 'median', 'std', 'var'])
-    col_title = []
-    if len(df_eng.columns) != 0:
-        col_title = list(df_eng.columns)
-    else:
-        col_title = list(df_ru.columns)
-    template_params = {
+    df_1 = file[file['2.1.1']==True]
+    df_2 = file[file['2.1.2']==True]
+    df_3 = file[file['2.1.3']==True]
+    df_4 = file[file['2.1.4']==True]
+    res_dict = {
         'title': 'Статистический анализ 3',
-        'col_title': col_title,
-        'row_num': [['mean_eng_1', 0], ['median_eng_1', 1], ['std_eng_1', 2], ['var_eng_1', 3], ['mean_ru_1', 4], ['median_ru_1', 5], ['std_ru_1', 6], ['var_ru_1', 7],
-                    ['mean_eng_2', 8], ['median_eng_2', 9], ['std_eng_2', 10], ['var_eng_2', 11], ['mean_ru_2', 12], ['median_ru_2', 13], ['std_ru_2', 14], ['var_ru_2', 15],
-                    ['mean_eng_3', 16], ['median_eng_3', 17], ['std_eng_3', 18], ['var_eng_3', 19], ['mean_ru_3', 20], ['median_ru_3', 21], ['std_ru_3', 22], ['var_ru_3', 23],
-                    ['mean_eng_4', 24], ['median_eng_4', 25], ['std_eng_4', 26], ['var_eng_4', 27], ['mean_ru_4', 28], ['median_ru_4', 29], ['std_ru_4', 30], ['var_ru_4', 31]],
-        'data': df_eng_1.values.tolist() + df_ru_1.values.tolist() + df_eng_2.values.tolist() + df_ru_2.values.tolist() +
-        df_eng_3.values.tolist() + df_ru_3.values.tolist() + df_eng_4.values.tolist() + df_ru_4.values.tolist(),
-        'data_len': [i for i in range(0, len(col_title))]
+        'desc': 'Тест значимости при помощи алгоритма chi-square на языковых подгруппах согласно пункту 1.3.1 (eng-ru)',
+        'value': []
     }
-    return template_params
+    for data, desc_num in [[df_1, 'Разделение подгруппы по фоновым знаниям согласно пункту 2.1.1'], 
+                            [df_2, 'Разделение на подгруппы по фоновым знаниям согласно пункту 2.1.2'], 
+                            [df_3, 'Разделение на подгруппы по фоновым знаниям согласно пункту 2.1.3'], 
+                            [df_4, 'Разделение на подгруппы по фоновым знаниям согласно пункту 2.1.4']]:
+        data = pd.DataFrame([data[data['1.3.1'] == True].sum(), data[data['1.3.1'] == False].sum()], index=['eng', 'ru'])
+        data = data.drop(['1.3.1', '1.3.2'], axis=1)
+        if 0 in data.values:
+            data = data.apply(add_one)
+        stat, p, dof, expected = chi2_contingency(data)
+        res = gen_stat(data, expected)
+        res = pd.DataFrame([res[0], res[1]], index=['eng', 'ru'], columns=data.columns)
+        template_params = {
+            'desc': desc_num,
+            'col_title': res.columns.tolist(),
+            'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
+            'data': res.values.tolist(),
+            'data_len': [i for i in range(0, len(res.columns))]
+        }
+        res_dict['value'].append(template_params)
+    return res_dict

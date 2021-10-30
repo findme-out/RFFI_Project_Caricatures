@@ -2,6 +2,7 @@ import pandas as pd
 from scipy.stats import chi2_contingency
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # utility function
 def add_one(x):
@@ -52,7 +53,8 @@ def gen_statistics_1(file):
         'col_title': res.columns.tolist(),
         'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
         'data': res.values.tolist(),
-        'data_len': [i for i in range(0, len(res.columns))]
+        'data_len': [i for i in range(0, len(res.columns))],
+        'p_cond': True
     }
     res_dict = {
         'title': 'Статистический анализ 1',
@@ -94,7 +96,8 @@ def gen_statistics_2(file):
         'col_title': res.columns.tolist(),
         'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
         'data': res.values.tolist(),
-        'data_len': [i for i in range(0, len(res.columns))]
+        'data_len': [i for i in range(0, len(res.columns))],
+        'p_cond': True
     }
     res_dict = {
         'title': 'Статистический анализ 2',
@@ -154,7 +157,64 @@ def gen_statistics_3(file):
             'col_title': res.columns.tolist(),
             'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
             'data': res.values.tolist(),
-            'data_len': [i for i in range(0, len(res.columns))]
+            'data_len': [i for i in range(0, len(res.columns))],
+            'p_cond': True
+        }
+        res_dict['value'].append(template_params)
+        axes.append(ax)
+    return res_dict, axes
+
+# generate dictionary for correlation 1
+def gen_correlation_1(file):
+    df = file.copy()
+    df = df.drop(['1.3.1', '1.3.2'], axis=1)
+    res = df.corr(method='pearson')
+    plt.figure(figsize=(20, 20))
+    ax = sns.heatmap(res, vmin=-1, vmax=1, cmap='Blues')
+    plt.tight_layout()
+    res = res.round(4)
+    template_params = {
+        'desc': '',
+        'col_title': res.columns.tolist(),
+        'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
+        'data': res.values.tolist(),
+        'data_len': [i for i in range(0, len(res.columns))],
+        'p_cond': False
+    }
+    res_dict = {
+        'title': 'Корреляционный анализ 1',
+        'desc': 'Корреляционный анализ по коэффициенту корреляции Пирсона',
+        'value': [template_params]
+    }
+    return res_dict, [ax]
+
+# generate dictionary for correlation 2
+def gen_correlation_2(file):
+    df_eng = file[file['1.3.1'] == True]
+    df_ru = file[file['1.3.1'] == False]
+    res_dict = {
+        'title': 'Корреляционный анализ 2',
+        'desc': 'Корреляционный анализ по коэффициенту корреляции Пирсона',
+        'value': []
+    }
+    axes = []
+    for data, desc_num in [[df_eng,
+                            'Данные подгруппы eng'],
+                           [df_ru,
+                            'Данные подгруппы ru']]:
+        data = data.drop(['1.3.1', '1.3.2'], axis=1)
+        res = data.corr(method='pearson')
+        plt.figure(figsize=(20, 20))
+        ax = sns.heatmap(res, vmin=-1, vmax=1, cmap='Blues')
+        plt.tight_layout()
+        res = res.round(4)
+        template_params = {
+            'desc': desc_num,
+            'col_title': res.columns.tolist(),
+            'row_num': [[res.index.tolist()[i], i] for i in range(0, len(res.index.tolist()))],
+            'data': res.values.tolist(),
+            'data_len': [i for i in range(0, len(res.columns))],
+            'p_cond': False
         }
         res_dict['value'].append(template_params)
         axes.append(ax)

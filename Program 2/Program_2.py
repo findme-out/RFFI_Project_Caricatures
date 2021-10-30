@@ -29,7 +29,7 @@ def generate_html(path_to_csv, template_list, template_name='template.html', out
 
 
 # handle statistics
-def work_with_format_csv(path_to_csv, gen_statistics_1=True, gen_statistics_2=True, gen_statistics_3=True):
+def work_with_format_csv(path_to_csv, gen_statistics_1=True, gen_statistics_2=True, gen_statistics_3=True, gen_correlation_1=True, gen_correlation_2=True):
     temp_path = ""
     for i in path_to_csv:
         if i == '\\':
@@ -71,6 +71,30 @@ def work_with_format_csv(path_to_csv, gen_statistics_1=True, gen_statistics_2=Tr
         for i in range(0, len(fig_list)):
             temp_temp_path = temp_path + str(i) + '.png'
             fig_list[i].savefig(temp_temp_path)
+            with open(temp_temp_path, 'rb') as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+            fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+    if gen_correlation_1:
+        temp_dict, fig_list = Algorithms.gen_correlation_1(file)
+        temp_path = path + 'corr_1_'
+        for i in range(0, len(fig_list)):
+            temp_temp_path = temp_path + str(i) + '.png'
+            fig_list[i].figure.savefig(temp_temp_path)
+            with open(temp_temp_path, 'rb') as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+            fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+    if gen_correlation_2:
+        temp_dict, fig_list = Algorithms.gen_correlation_2(file)
+        temp_path = path + 'corr_2_'
+        for i in range(0, len(fig_list)):
+            temp_temp_path = temp_path + str(i) + '.png'
+            fig_list[i].figure.savefig(temp_temp_path)
             with open(temp_temp_path, 'rb') as image_file:
                 encoded_string = base64.b64encode(image_file.read())
             fig_list[i] = encoded_string

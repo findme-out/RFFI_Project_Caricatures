@@ -10,8 +10,8 @@ Requirements:
 	c) xlrd ver 2.0.1;
 	d) chameleon ver 3.9.1;
 	e) scipy ver 1.7.1;
-	f) matplotlib 3.4.3;
-	g) seaborn 0.11.2.
+	f) matplotlib ver 3.4.3;
+	g) seaborn ver 0.11.2.
 	
 Примечание: установка питон-пакетов производится через "pip install *package name*" в командной строке. Проверка версий библиотек просиходит по команде "pip list".
 

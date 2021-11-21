@@ -66,7 +66,7 @@ def get_data(file_location):
             if col_val == col_val:
                 if type(col_val) is str:
                     col_val = col_val.strip().lower()
-                if check_int(col_val):
+                if proj == -1 and check_int(col_val):
                     proj = col_index
                 if proj == col_index and check_int(col_val):
                     proj_status = True

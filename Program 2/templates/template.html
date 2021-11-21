@@ -7,6 +7,13 @@
     background-color: #373737;
     color: #ffffff;
   }
+  th{
+    text-align: left;
+  }
+  .error_class{
+    color: red;
+    font-weight: bold;
+  }
 </style>
 
 <body>
@@ -35,12 +42,13 @@
               ${dict['data'][row[1]][col_num][1]}
             </td>
             <td tal:repeat="col_num dict['data_len']" tal:condition="not dict['p_cond']">
-              ${dict['data'][row[1]][col_num]}
+              <p class="error_class" tal:condition="dict['data'][row[1]][col_num]=='error'">${dict['data'][row[1]][col_num]}</p>
+              <p tal:condition="not dict['data'][row[1]][col_num]=='error'">${dict['data'][row[1]][col_num]}</p>
             </td>
           </tr>
         </tbody>
       </table>
-      <img src="data:image/png;base64,${dict['graph']}">
+      <img src="data:image/png;base64,${dict['graph']}" tal:condition="dict['graph_option']">
     </div>
   </div>
 </body>

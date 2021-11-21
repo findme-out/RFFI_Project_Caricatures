@@ -29,7 +29,9 @@ def generate_html(path_to_csv, template_list, template_name='template.html', out
 
 
 # handle statistics
-def work_with_format_csv(path_to_csv, gen_statistics_1=True, gen_statistics_2=True, gen_statistics_3=True, gen_correlation_1=True, gen_correlation_2=True):
+def work_with_format_csv(path_to_csv, gen_code_feature_desc=True, gen_statistics_1=True, gen_statistics_2=True, gen_statistics_3=True, gen_statistics_4=True,
+                         gen_statistics_5=True, gen_correlation_1=True, gen_correlation_2=True, gen_regression_1=True, gen_regression_2=True,
+                         gen_clusterization_1=True, gen_clusterization_2=True):
     temp_path = ""
     for i in path_to_csv:
         if i == '\\':
@@ -41,64 +43,183 @@ def work_with_format_csv(path_to_csv, gen_statistics_1=True, gen_statistics_2=Tr
     file = file.drop(file.columns[0], axis=1)
     path = path_to_csv[:(path_to_csv.rfind('/')) + 1]
     template_list = []
+    if gen_code_feature_desc:
+        temp_dict, fig_list = Algorithms.gen_code_feature_desc(file)
+        temp_path = path + 'code_feature_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
     if gen_statistics_1:
         temp_dict, fig_list = Algorithms.gen_statistics_1(file)
         temp_path = path + 'stat_1_'
         for i in range(0, len(fig_list)):
-            temp_temp_path = temp_path + str(i) + '.png'
-            fig_list[i].savefig(temp_temp_path)
-            with open(temp_temp_path, 'rb') as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-            fig_list[i] = encoded_string
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
         for i in range(0, len(temp_dict['value'])):
-            temp_dict['value'][i]['graph'] = fig_list[i]
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
         template_list.append(temp_dict)
+        print('Completed statistics 1 successfully')
     if gen_statistics_2:
         temp_dict, fig_list = Algorithms.gen_statistics_2(file)
         temp_path = path + 'stat_2_'
         for i in range(0, len(fig_list)):
-            temp_temp_path = temp_path + str(i) + '.png'
-            fig_list[i].savefig(temp_temp_path)
-            with open(temp_temp_path, 'rb') as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-            fig_list[i] = encoded_string
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
         for i in range(0, len(temp_dict['value'])):
-            temp_dict['value'][i]['graph'] = fig_list[i]
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
         template_list.append(temp_dict)
+        print('Completed statistics 2 successfully')
     if gen_statistics_3:
         temp_dict, fig_list = Algorithms.gen_statistics_3(file)
         temp_path = path + 'stat_3_'
         for i in range(0, len(fig_list)):
-            temp_temp_path = temp_path + str(i) + '.png'
-            fig_list[i].savefig(temp_temp_path)
-            with open(temp_temp_path, 'rb') as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-            fig_list[i] = encoded_string
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
         for i in range(0, len(temp_dict['value'])):
-            temp_dict['value'][i]['graph'] = fig_list[i]
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
         template_list.append(temp_dict)
+        print('Completed statistics 3 successfully')
+    if gen_statistics_4:
+        temp_dict, fig_list = Algorithms.gen_statistics_4(file)
+        temp_path = path + 'stat_4_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed statistics 4 successfully')
+    if gen_statistics_5:
+        temp_dict, fig_list = Algorithms.gen_statistics_5(file)
+        temp_path = path + 'stat_5_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed statistics 5 successfully')
     if gen_correlation_1:
         temp_dict, fig_list = Algorithms.gen_correlation_1(file)
         temp_path = path + 'corr_1_'
         for i in range(0, len(fig_list)):
-            temp_temp_path = temp_path + str(i) + '.png'
-            fig_list[i].figure.savefig(temp_temp_path)
-            with open(temp_temp_path, 'rb') as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-            fig_list[i] = encoded_string
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
         for i in range(0, len(temp_dict['value'])):
-            temp_dict['value'][i]['graph'] = fig_list[i]
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
         template_list.append(temp_dict)
+        print('Completed correlation 1 successfully')
     if gen_correlation_2:
         temp_dict, fig_list = Algorithms.gen_correlation_2(file)
         temp_path = path + 'corr_2_'
         for i in range(0, len(fig_list)):
-            temp_temp_path = temp_path + str(i) + '.png'
-            fig_list[i].figure.savefig(temp_temp_path)
-            with open(temp_temp_path, 'rb') as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-            fig_list[i] = encoded_string
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
         for i in range(0, len(temp_dict['value'])):
-            temp_dict['value'][i]['graph'] = fig_list[i]
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
         template_list.append(temp_dict)
+        print('Completed correlation 2 successfully')
+    if gen_regression_1:
+        temp_dict, fig_list = Algorithms.gen_regression_1(file)
+        temp_path = path + 'regr_1_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed regression 1 successfully')
+    if gen_regression_2:
+        temp_dict, fig_list = Algorithms.gen_regression_2(file)
+        temp_path = path + 'regr_2_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed regression 2 successfully')
+    if gen_clusterization_1:
+        temp_dict, fig_list = Algorithms.gen_clusterization_1(file)
+        temp_path = path + 'clust_1_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed clusterization 1 successfully')
+    if gen_clusterization_2:
+        temp_dict, fig_list = Algorithms.gen_clusterization_2(file)
+        temp_path = path + 'clust_2_'
+        for i in range(0, len(fig_list)):
+            if fig_list[i] is not None:
+                temp_temp_path = temp_path + str(i) + '.png'
+                fig_list[i].figure.savefig(temp_temp_path)
+                with open(temp_temp_path, 'rb') as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                fig_list[i] = encoded_string
+        for i in range(0, len(temp_dict['value'])):
+            if temp_dict['value'][i]['graph_option']:
+                temp_dict['value'][i]['graph'] = fig_list[i]
+        template_list.append(temp_dict)
+        print('Completed clusterization 2 successfully')
     generate_html(path, template_list)
